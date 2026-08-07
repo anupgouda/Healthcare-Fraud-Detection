@@ -4,6 +4,15 @@
 An end-to-end machine learning solution for detecting fraudulent healthcare providers by analyzing inpatient, outpatient, and beneficiary claims data.
 
 ---
+## Live Demo
+
+[https://your-streamlit-url.streamlit.app/](https://your-streamlit-url.streamlit.app/)
+
+## GitHub Repository
+
+https://github.com/anupgouda/Healthcare-Fraud-Detection
+
+---
 
 ## 🚀 Project Overview
 
