@@ -6,7 +6,7 @@ An end-to-end machine learning solution for detecting fraudulent healthcare prov
 ---
 ## Live Demo
 
-[https://your-streamlit-url.streamlit.app/](https://your-streamlit-url.streamlit.app/)
+https://healthcare-fraud-detection-duybv2cwv92n34bezyivk4.streamlit.app/
 
 ## GitHub Repository
 
