@@ -21,6 +21,12 @@ st.set_page_config(
     page_icon="🏥",
     layout="wide"
 )
+with st.sidebar:
+    st.success("Application deployed successfully")
+    st.markdown(
+        "[GitHub Repository]"
+        "(https://github.com/anupgouda/Healthcare-Fraud-Detection)"
+    )
 
 st.markdown(
     """
@@ -334,6 +340,9 @@ st.info(
 st.markdown("---")
 
 st.caption(
-    "Healthcare Fraud Analytics Platform | "
-    "Machine Learning | Streamlit | Plotly"
+    """
+    Developed by Appaji Gouda
+
+    Artificial Intelligence and Machine Learning Engineer
+    """
 )
