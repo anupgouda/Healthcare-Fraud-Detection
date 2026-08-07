@@ -127,10 +127,25 @@ streamlit run app.py
 - Advanced anomaly detection
 
 ---
+## Dashboard Preview
+
+### Home Page
+
+![Dashboard](images/dashboard.png)
+
+### Fraud Analysis
+
+![Analysis](images/analysis.png)
+
+### High-Risk Providers
+
+![Providers](images/providers.png)
+
+---
 
 ## 👨‍💻 Author
 
-Anup Gouda
+Appaji Gouda
 
 Artificial Intelligence and Machine Learning Engineer
 =======
