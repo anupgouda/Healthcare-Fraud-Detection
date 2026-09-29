@@ -34,6 +34,98 @@ The platform combines:
 - Automated testing
 
 ---
+## 📊 Dataset
+
+This project uses the publicly available **Healthcare Provider Fraud Detection Analysis** dataset, which contains Medicare healthcare claims and beneficiary information for provider-level fraud-risk modeling.
+
+### Dataset Source
+
+**Primary source:** [Kaggle — Healthcare Provider Fraud Detection Analysis](https://www.kaggle.com/datasets/rohitrox/healthcare-provider-fraud-detection-analysis?utm_source=chatgpt.com)
+
+**Alternative verified download source:** [Zenodo — Medicare Fraud Detection Dataset](https://zenodo.org/records/18138102?utm_source=chatgpt.com)
+
+The dataset contains separate provider, beneficiary, inpatient-claim, and outpatient-claim files. The project uses the labeled **training files** for feature engineering and prediction.
+
+### Files Used by FraudLens AI
+
+| File                                      | Description                                                                                                | Approx. Size |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -----------: |
+| `Train-1542865627584.csv`                 | Provider-level labels containing `Provider` and `PotentialFraud`                                           |        87 KB |
+| `Train_Beneficiarydata-1542865627584.csv` | Beneficiary demographics, coverage, chronic conditions, reimbursement and deductible information           |      11.4 MB |
+| `Train_Inpatientdata-1542865627584.csv`   | Inpatient healthcare claims, diagnoses, procedures, admission/discharge information and reimbursement data |       8.6 MB |
+| `Train_Outpatientdata-1542865627584.csv`  | Outpatient healthcare claims, diagnoses, procedures and reimbursement information                          |      77.4 MB |
+
+The four training files together form the input required by the **Run a New Healthcare Analysis** workflow.
+
+### Dataset Scale
+
+The training dataset contains approximately:
+
+* **5,410 providers**
+* **138,556 beneficiary records**
+* **40,474 inpatient claims**
+* **517,737 outpatient claims**
+
+The provider label file contains the `PotentialFraud` target used for supervised learning.
+
+### How the Dataset Is Used
+
+FraudLens AI processes the datasets in the following order:
+
+```text
+Training CSV Files
+       │
+       ▼
+Date Conversion & Cleaning
+       │
+       ▼
+Claims + Beneficiary Join
+       │
+       ▼
+Provider-Level Feature Engineering
+       │
+       ▼
+Provider Aggregation
+       │
+       ▼
+16 Model Features
+       │
+       ▼
+Random Forest Classifier
+       │
+       ▼
+Fraud-Risk Probability
+       │
+       ├── Low
+       ├── Medium
+       └── High
+       │
+       ▼
+FastAPI
+       │
+       ▼
+PostgreSQL
+```
+
+### Downloading the Dataset
+
+To run a new analysis on the live application, download the dataset from the Kaggle source above and extract the training files.
+
+Upload these three source datasets in FraudLens AI:
+
+1. `Train_Beneficiarydata-1542865627584.csv`
+2. `Train_Inpatientdata-1542865627584.csv`
+3. `Train_Outpatientdata-1542865627584.csv`
+
+The provider label file (`Train-1542865627584.csv`) is used during the model-development/training workflow and is not required by the deployed prediction upload interface.
+
+### Important Note
+
+This is a publicly available research dataset. It is used for machine-learning experimentation and demonstration of provider-level risk analysis.
+
+The model produces a **risk signal for investigation**. A high-risk prediction does not establish that a provider committed fraud or constitute a legal finding.
+
+----
 
 ## 🏗️ System Architecture
 
