@@ -1,3 +1,5 @@
+import os
+
 import psycopg2
 
 
@@ -5,10 +7,13 @@ import psycopg2
 # DATABASE CONFIGURATION
 # ----------------------------------------------------
 
-DB_HOST = "localhost"
-DB_PORT = 5432
-DB_NAME = "healthcare_fraud"
-DB_USER = "anupgouda"
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = int(os.getenv("DB_PORT", "5432"))
+DB_NAME = os.getenv("DB_NAME", "healthcare_fraud")
+DB_USER = os.getenv("DB_USER", "anupgouda")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 
 # ----------------------------------------------------
@@ -17,14 +22,16 @@ DB_USER = "anupgouda"
 
 def get_connection():
 
-    connection = psycopg2.connect(
+    if DATABASE_URL:
+        return psycopg2.connect(DATABASE_URL)
+
+    return psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
         database=DB_NAME,
-        user=DB_USER
+        user=DB_USER,
+        password=DB_PASSWORD,
     )
-
-    return connection
 
 
 # ----------------------------------------------------
