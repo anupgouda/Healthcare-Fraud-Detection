@@ -68,6 +68,24 @@ The training dataset contains approximately:
 
 The provider label file contains the `PotentialFraud` target used for supervised learning.
 
+Dataset Source
+      ↓
+Kaggle
+      ↓
+Download Dataset
+      ↓
+Extract ZIP
+      ↓
+Upload 3 CSV files
+      ↓
+Run FraudLens AI
+      ↓
+5,410 providers analyzed
+      ↓
+Risk + Explainability + Investigations
+
+
+
 ### How the Dataset Is Used
 
 FraudLens AI processes the datasets in the following order:
