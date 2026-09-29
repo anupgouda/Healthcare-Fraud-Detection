@@ -1,7 +1,8 @@
-<<<<<<< HEAD
 # 🏥 Healthcare Fraud Analytics Platform
 
-An end-to-end machine learning solution for detecting fraudulent healthcare providers by analyzing inpatient, outpatient, and beneficiary claims data.
+An end-to-end healthcare fraud analytics platform that uses machine learning to identify healthcare provider patterns associated with potential fraud and supports investigation workflows.
+
+> **Important:** The model produces a risk signal for investigation. A high-risk prediction does not establish that fraud has actually occurred.
 
 ---
 ## Live Demo
@@ -16,36 +17,79 @@ https://github.com/anupgouda/Healthcare-Fraud-Detection
 
 ## 🚀 Project Overview
 
-This project uses machine learning techniques to identify potentially fraudulent healthcare providers and assist investigators in reducing financial losses.
+This project analyzes inpatient, outpatient, and beneficiary healthcare claims data at the provider level.
 
-The platform includes:
+The platform combines:
 
 - Data preprocessing
-- Feature engineering
-- Exploratory data analysis
-- Model training
-- Fraud prediction
-- Risk assessment
+- Provider-level feature engineering
+- Machine learning prediction
+- Risk classification
+- FastAPI prediction services
+- PostgreSQL prediction storage
+- Prediction run history
+- Investigation management
+- SHAP-based explainability
 - Interactive Streamlit dashboard
+- Automated testing
 
 ---
 
-## 🛠️ Technology Stack
-
-| Category | Technology |
-|----------|-------------|
-| Language | Python |
-| Data Analysis | Pandas, NumPy |
-| Machine Learning | Scikit-learn |
-| Visualization | Plotly |
-| Dashboard | Streamlit |
-| Model Storage | Joblib |
-
----
-
-## 📁 Project Structure
+## 🏗️ System Architecture
 
 ```text
+Healthcare Claims Data
+        │
+        ▼
+Data Preprocessing
+        │
+        ▼
+Provider-Level Feature Engineering
+        │
+        ▼
+Random Forest Model
+        │
+        ▼
+Fraud Probability
+        │
+        ├── Low Risk
+        ├── Medium Risk
+        └── High Risk
+        │
+        ▼
+FastAPI
+        │
+        ├── Prediction API
+        ├── Prediction Runs
+        └── Investigation API
+        │
+        ▼
+PostgreSQL
+        │
+        ├── Predictions
+        ├── Prediction Runs
+        └── Investigations
+        │
+        ▼
+Streamlit Analytics Dashboard
+        │
+        └── SHAP Explainability
+🛠️ Technology Stack
+Category	Technology
+Language	Python 3.11
+Data Analysis	Pandas, NumPy
+Machine Learning	Scikit-learn
+Model Persistence	Joblib
+API	FastAPI
+API Server	Uvicorn
+Validation	Pydantic
+Database	PostgreSQL
+Database Driver	psycopg2
+Explainability	SHAP
+Visualization	Plotly
+Dashboard	Streamlit
+Testing	Pytest
+📁 Project Structure
 HEALTHCARE-FRAUD-DETECTION/
 │
 ├── app.py
@@ -53,111 +97,283 @@ HEALTHCARE-FRAUD-DETECTION/
 ├── README.md
 ├── .gitignore
 │
+├── api/
+│   ├── main.py
+│   ├── prediction.py
+│   ├── schemas.py
+│   └── investigation.py
+│
 ├── data/
+│   ├── Train-1542865627584.csv
+│   ├── Train_Beneficiarydata-1542865627584.csv
+│   ├── Train_Inpatientdata-1542865627584.csv
+│   └── Train_Outpatientdata-1542865627584.csv
 │
 ├── models/
-│   ├── fraud_model.pkl
 │   └── fraud_pipeline.pkl
 │
 ├── notebooks/
-│   └── Sagility1.ipynb
+│   ├── Sagility1.ipynb
+│   └── Sagility1_engineering_v2.ipynb
 │
-└── src/
-    ├── feature_engineering.py
-    ├── model.py
-    ├── model_input.py
-    ├── predict.py
-    └── preprocessing.py
-```
-
----
-
-## ⚙️ Installation
-
-Clone the repository:
-
-```bash
+├── src/
+│   ├── api_client.py
+│   ├── model_input.py
+│   ├── preprocessing.py
+│   │
+│   ├── database/
+│   │   ├── __init__.py
+│   │   ├── connection.py
+│   │   └── prediction_repository.py
+│   │
+│   └── explainability/
+│       ├── __init__.py
+│       └── shap_explainer.py
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_integration.py
+│   ├── test_investigations.py
+│   ├── test_model.py
+│   ├── test_prediction_api.py
+│   └── test_prediction_repository.py
+│
+├── test_explainability.py
+│
+└── images/
+    ├── dashboard.png
+    ├── analysis.png
+    └── providers.png
+⚙️ Installation
+1. Clone the repository
 git clone <repository_url>
-```
+cd Healthcare-Fraud-Detection
+2. Create the Python environment
 
-Move into the project directory:
+Using Conda:
 
-```bash
-cd HEALTHCARE-FRAUD-DETECTION
-```
-
-Install the dependencies:
-
-```bash
+conda create -n fraud python=3.11
+conda activate fraud
+3. Install dependencies
 pip install -r requirements.txt
-```
+4. Configure PostgreSQL
 
----
+Create the database:
 
-## ▶️ Run the Application
+CREATE DATABASE healthcare_fraud;
 
-```bash
+Configure the PostgreSQL connection using the environment variables expected by the application.
+
+▶️ Run the Application
+Start FastAPI
+uvicorn api.main:app --reload --host 127.0.0.1 --port 8000
+
+API:
+
+http://127.0.0.1:8000
+
+Interactive API documentation:
+
+http://127.0.0.1:8000/docs
+Start Streamlit
+
+In another terminal:
+
 streamlit run app.py
-```
+🤖 Machine Learning Model
 
----
+The production model is stored at:
 
-## 🤖 Machine Learning Workflow
+models/fraud_pipeline.pkl
+Model Configuration
+Property	Value
+Model	RandomForestClassifier
+Version	2.1
+Features	16
+Threshold	0.45
+Random State	42
+Evaluation Metrics
+Metric	Value
+Accuracy	0.9473
+Precision	0.7391
+Recall	0.6733
+F1 Score	0.7047
+ROC-AUC	0.9673
+PR-AUC	0.7864
+🔍 Prediction Workflow
+Provider Data
+     │
+     ▼
+Feature Validation
+     │
+     ▼
+Model Prediction
+     │
+     ▼
+Fraud Probability
+     │
+     ▼
+Risk Classification
+     │
+     ├── Low
+     ├── Medium
+     └── High
+     │
+     ▼
+Database Storage
 
-1. Data collection
-2. Data cleaning
-3. Feature engineering
-4. Data aggregation
-5. Model training
-6. Model evaluation
-7. Fraud prediction
-8. Risk classification
-9. Dashboard visualization
+The binary prediction threshold is:
 
----
+0.45
 
-## 📊 Features
+Risk levels are intended as an investigation-prioritization signal.
 
-- Provider-level fraud detection
-- Automated risk scoring
-- Interactive visualizations
-- Top high-risk provider identification
-- Downloadable prediction reports
-- Real-time analytics dashboard
+🗄️ PostgreSQL
 
----
+The platform stores prediction and investigation information in PostgreSQL.
 
-## 📈 Future Improvements
+Core entities:
 
-- Deep learning models
-- Real-time fraud detection
-- Cloud deployment
-- Explainable AI integration
-- Advanced anomaly detection
+prediction_runs
+      │
+      ▼
+predictions
+      │
+      ▼
+investigations
+Prediction Runs
 
----
-## Dashboard Preview
+Stores:
 
-### Home Page
+Model version
+Provider count
+High-risk count
+Medium-risk count
+Low-risk count
+Run status
+Start time
+Completion time
+Predictions
 
-![Dashboard](images/dashboard.png)
+Stores:
 
-### Fraud Analysis
+Provider ID
+Fraud probability
+Prediction
+Risk level
+Model version
+Threshold
+Prediction run
+Investigations
 
-![Analysis](images/analysis.png)
+Stores:
 
-### High-Risk Providers
+Provider ID
+Prediction ID
+Investigation status
+Priority
+Assigned investigator/team
+Notes
+Created time
+Updated time
+🔎 Investigation Workflow
 
-![Providers](images/providers.png)
+Investigators can create an investigation for a provider prediction.
 
----
+Statuses
+Open
+Under Review
+Resolved
+Priorities
+Low
+Normal
+High
+Critical
 
-## 👨‍💻 Author
+The investigation API validates that the provider prediction exists before creating an investigation.
+
+🧠 Explainability
+
+The platform includes SHAP-based explainability to help users understand which model features contributed to a prediction.
+
+Implementation:
+
+src/explainability/shap_explainer.py
+📊 Dashboard
+
+The Streamlit dashboard provides:
+
+Provider risk analysis
+Prediction results
+High-risk provider identification
+Investigation management
+Model explainability
+Analytics
+Prediction run history
+Data exploration
+Dashboard Preview
+Dashboard
+
+Fraud Analysis
+
+High-Risk Providers
+
+🧪 Testing
+
+The project includes automated tests for:
+
+Machine learning model
+Model artifact
+Prediction API
+Prediction repository
+PostgreSQL-backed prediction retrieval
+Investigation API
+Investigation validation
+
+Run the complete test suite:
+
+python -m pytest -v
+
+Current verified result:
+
+30 passed
+
+There are currently three dependency-level SHAP deprecation warnings. These do not represent failing application tests.
+
+📌 API Endpoints
+GET    /
+GET    /health
+
+GET    /prediction-runs
+GET    /predictions/run/{run_id}
+
+GET    /investigations
+GET    /investigations/{investigation_id}
+POST   /investigations
+PATCH  /investigations/{investigation_id}
+
+FastAPI documentation:
+
+http://127.0.0.1:8000/docs
+🔐 Project Safety
+
+This platform is designed as an analytics and investigation-support system.
+
+A model prediction should not be interpreted as proof of fraud. Predictions identify historical patterns associated with potential risk and can be used to prioritize further human review.
+
+🔮 Future Improvements
+Model monitoring
+Data drift detection
+Automated retraining pipelines
+Advanced anomaly detection
+Cloud deployment
+Role-based authentication
+Audit logging
+Advanced investigation workflows
+Additional explainability methods
+Production monitoring and observability
+👨‍💻 Author
 
 Appaji Gouda
 
 Artificial Intelligence and Machine Learning Engineer
-=======
-# Healthcare-Fraud-Detection
-An end-to-end machine learning solution for detecting fraudulent healthcare providers by analyzing inpatient,  outpatient, and beneficiary claims data.
->>>>>>> e009b5d31ebe3f361ad927f6f0ab90809b320d75
