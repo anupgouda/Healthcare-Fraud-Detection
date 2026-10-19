@@ -75,7 +75,7 @@ def get_explainer(_model, feature_names):
 # ============================================================
 # HELPERS
 # ============================================================
-RISK_COLORS = {"High": "#fb3b64", "Medium": "#f5a524", "Low": "#12d6a0"}
+RISK_COLORS = {"High": "#B94B43", "Medium": "#B77A32", "Low": "#4F8068"}
 
 
 def html(s: str):
@@ -132,7 +132,7 @@ def build_prediction_dataframe(predictions):
 
 
 def render_table(df, max_rows=None, percent_columns=None):
-    """Dark glass HTML table with risk badges and inline probability bars."""
+    """Render a readable light-theme table with risk badges and probability bars."""
     if df is None or df.empty:
         st.info("No records to display.")
         return
@@ -162,16 +162,19 @@ def render_table(df, max_rows=None, percent_columns=None):
 
 
 def style_fig(fig, height=420):
+    """Apply the FraudLens warm, low-contrast editorial chart theme."""
     fig.update_layout(
-        template="plotly_dark",
-        height=height,
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#c7cde0", family="Inter, Arial, sans-serif"),
+        template="plotly_white", height=height,
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#38352F", family="Arial, sans-serif", size=12),
+        title_font=dict(color="#302D28", size=16),
         margin=dict(l=10, r=10, t=50, b=10),
+        colorway=["#B86F52", "#718A75", "#C08A48", "#6D8294", "#8C7B70"],
     )
-    fig.update_xaxes(gridcolor="rgba(255,255,255,.07)", zerolinecolor="rgba(255,255,255,.12)")
-    fig.update_yaxes(gridcolor="rgba(255,255,255,.07)", zerolinecolor="rgba(255,255,255,.12)")
+    fig.update_xaxes(gridcolor="#EAE3D9", zerolinecolor="#D7CFC3", linecolor="#D7CFC3",
+                     tickfont=dict(color="#625D55"), title_font=dict(color="#625D55"))
+    fig.update_yaxes(gridcolor="#EAE3D9", zerolinecolor="#D7CFC3", linecolor="#D7CFC3",
+                     tickfont=dict(color="#625D55"), title_font=dict(color="#625D55"))
     return fig
 
 
@@ -305,139 +308,104 @@ def reset_current_analysis():
 
 
 # ============================================================
-# STYLES  (dark glass command-center)
+# STYLES  (warm editorial analytics theme)
 # ============================================================
 st.markdown(r'''
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-:root{
-  --bg:#060810;--card:rgba(255,255,255,.045);--card-2:rgba(255,255,255,.07);
-  --line:rgba(255,255,255,.09);--ink:#eef1fb;--muted:#8e97b3;
-  --cyan:#22d3ee;--violet:#8b5cf6;--pink:#fb3b64;--amber:#f5a524;--green:#12d6a0;
+:root {
+  --page: #F5F1EA; --surface: #FFFCF7; --surface-muted: #F0EAE0; --line: #E4DCCE;
+  --ink: #302D28; --muted: #777066; --terracotta: #B86F52; --terracotta-dark: #92543D;
+  --sage: #718A75; --amber: #B77A32; --risk-high: #B94B43; --risk-medium: #B77A32; --risk-low: #4F8068;
 }
-/* Base — Material icon glyphs are deliberately left alone */
-html,body,.stApp{font-family:Inter,Arial,sans-serif}
-.stApp{
-  color:var(--ink);color-scheme:dark;
-  background:
-    radial-gradient(900px 500px at 8% -8%,rgba(139,92,246,.30),transparent 60%),
-    radial-gradient(800px 500px at 96% 2%,rgba(34,211,238,.18),transparent 60%),
-    radial-gradient(700px 500px at 60% 110%,rgba(251,59,100,.14),transparent 60%),
-    var(--bg)!important;
-}
-:where(.stApp) :where(p,span,li,label,h1,h2,h3,h4,h5,h6,div){color:var(--ink)}
-:where(.stApp) :where([data-testid="stIconMaterial"]){font-family:'Material Symbols Rounded'!important}
-[data-testid="stHeader"],[data-testid="stToolbar"],[data-testid="stSidebar"],[data-testid="stSidebarCollapsedControl"],#MainMenu,footer{display:none!important}
-.main .block-container{max-width:1560px!important;margin:0 auto!important;padding:22px 44px 60px!important}
-h1,h2,h3,h4{letter-spacing:-.03em;font-weight:800}
-h3{font-size:1.15rem!important;margin-top:.4rem!important}
-hr{border-color:var(--line)!important}
-
-/* Top bar + hero */
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.brand{display:flex;align-items:center;gap:12px}
-.brand-logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;
-  background:linear-gradient(135deg,var(--violet),var(--cyan));box-shadow:0 0 28px rgba(139,92,246,.55)}
-.brand-name{font-size:20px;font-weight:900;letter-spacing:-.05em}
-.brand-sub{font-size:12px;color:var(--muted)}
-.live{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:var(--card);
-  border:1px solid var(--line);font-size:12px;font-weight:700;backdrop-filter:blur(12px)}
-.live i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(18,214,160,.7);animation:ping 1.8s infinite}
-@keyframes ping{70%{box-shadow:0 0 0 9px rgba(18,214,160,0)}100%{box-shadow:0 0 0 0 rgba(18,214,160,0)}}
-.hero{position:relative;overflow:hidden;padding:34px 36px;border-radius:26px;margin-bottom:18px;
-  background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(34,211,238,.08) 60%,rgba(255,255,255,.03));
-  border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 60px rgba(0,0,0,.45)}
-.hero:before{content:"";position:absolute;width:420px;height:420px;right:-120px;top:-220px;border-radius:50%;
-  background:conic-gradient(from 90deg,var(--violet),var(--cyan),var(--pink),var(--violet));filter:blur(70px);opacity:.35;animation:spin 14s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.hero>*{position:relative;z-index:1}
-.kicker{font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)!important}
-.hero-title{font-size:44px;line-height:1.05;font-weight:900;letter-spacing:-.06em;margin-top:10px;
-  background:linear-gradient(90deg,#fff,#c4b5fd 45%,#67e8f9);-webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:transparent!important}
-.hero-text{max-width:760px;margin-top:12px;font-size:14px;line-height:1.65;color:#b6bdd6!important}
-.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-.pills span{padding:7px 12px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.08em;
-  background:rgba(255,255,255,.07);border:1px solid var(--line);color:#dbe1f5!important}
-
-/* Toolbar container */
-.st-key-toolbar{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:18px!important;
-  padding:10px 14px!important;margin-bottom:16px;backdrop-filter:blur(14px)}
-
-/* Metric cards */
-.metric-card{position:relative;min-height:122px;padding:18px 20px;border-radius:20px;background:var(--card);
-  border:1px solid var(--line);backdrop-filter:blur(14px);overflow:hidden;transition:transform .2s,border-color .2s}
-.metric-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.2)}
-.metric-card:after{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--accent,var(--cyan))}
-.metric-card.hot{background:linear-gradient(135deg,rgba(251,59,100,.28),rgba(139,92,246,.16));
-  border-color:rgba(251,59,100,.45);box-shadow:0 0 40px rgba(251,59,100,.22)}
-.metric-label{font-size:12px;font-weight:700;color:var(--muted)!important;text-transform:uppercase;letter-spacing:.08em}
-.metric-value{font-size:34px;font-weight:900;letter-spacing:-.05em;margin-top:8px}
-.metric-delta{font-size:12px;color:var(--muted)!important;margin-top:4px}
-
-/* Cards */
-.section-card{padding:20px;border-radius:20px;background:var(--card);border:1px solid var(--line);
-  backdrop-filter:blur(14px);margin-bottom:14px}
-.section-card h3{margin:0 0 6px}
-.alert-card{padding:14px 18px;border-radius:16px;font-size:13px;line-height:1.55;
-  background:linear-gradient(90deg,rgba(251,59,100,.18),rgba(251,59,100,.05));border:1px solid rgba(251,59,100,.4)}
-.small-muted{font-size:12px;color:var(--muted)!important}
-.pulse-label{font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted)!important}
-.pulse-value{font-size:36px;font-weight:900;letter-spacing:-.05em;margin-top:4px}
-.pulse-track{height:8px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:14px;overflow:hidden}
-.pulse-fill{height:100%;border-radius:99px;box-shadow:0 0 14px currentColor}
-
-/* Table */
-.table-wrap{overflow:auto;border-radius:18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(14px)}
-.glass-table{width:100%;border-collapse:collapse;font-size:13px}
-.glass-table th{position:sticky;top:0;text-align:left;padding:12px 14px;font-size:11px;font-weight:800;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--muted)!important;background:rgba(255,255,255,.05);border-bottom:1px solid var(--line);white-space:nowrap}
-.glass-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;color:var(--ink)}
-.glass-table tr:last-child td{border-bottom:none}
-.glass-table tbody tr:hover td{background:rgba(255,255,255,.04)}
-.badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.04em}
-.b-high{background:rgba(251,59,100,.16);color:#ff7f98!important;border:1px solid rgba(251,59,100,.45)}
-.b-medium{background:rgba(245,165,36,.14);color:#ffc55e!important;border:1px solid rgba(245,165,36,.4)}
-.b-low{background:rgba(18,214,160,.13);color:#4fe8c0!important;border:1px solid rgba(18,214,160,.4)}
-.b-unknown{background:rgba(255,255,255,.08);color:var(--muted)!important;border:1px solid var(--line)}
-.pbar{position:relative;min-width:120px;height:22px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden}
-.pbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--violet),var(--pink));opacity:.55}
-.pbar span{position:relative;z-index:1;display:block;padding:3px 9px;font-size:12px;font-weight:700}
-
-/* Native widgets */
-.stButton>button,.stDownloadButton>button{min-height:42px!important;border-radius:12px!important;font-weight:700!important;font-size:13px!important;
-  background:var(--card-2)!important;border:1px solid var(--line)!important;color:var(--ink)!important;transition:all .18s!important}
-.stButton>button:hover,.stDownloadButton>button:hover{border-color:var(--cyan)!important;box-shadow:0 0 22px rgba(34,211,238,.28)!important;transform:translateY(-1px)}
-.stButton>button[kind="primary"],.stDownloadButton>button{background:linear-gradient(135deg,var(--violet),#3b82f6 60%,var(--cyan))!important;border:none!important;color:#fff!important;box-shadow:0 8px 24px rgba(99,102,241,.4)!important}
-.stButton>button *,.stDownloadButton>button *{color:inherit!important}
-.stButton>button:disabled{opacity:.45!important}
-[data-testid="stWidgetLabel"] p{font-size:12px!important;font-weight:700!important;color:var(--muted)!important;text-transform:uppercase;letter-spacing:.07em}
-.stTextInput input,.stTextArea textarea,[data-baseweb="select"]>div,[data-baseweb="input"]{background:rgba(255,255,255,.06)!important;
-  color:var(--ink)!important;border-color:var(--line)!important;border-radius:12px!important}
-.stTextInput input::placeholder{color:#6d7594!important}
-[data-baseweb="popover"],[data-baseweb="menu"]{background:#11142a!important;border:1px solid var(--line)!important;border-radius:12px!important}
-[data-baseweb="menu"] *{color:var(--ink)!important;background:transparent!important}
-[data-baseweb="menu"] li:hover{background:rgba(139,92,246,.25)!important}
-[data-baseweb="tag"]{background:rgba(139,92,246,.3)!important}
-.stFileUploader section{background:rgba(255,255,255,.04)!important;border:1px dashed rgba(255,255,255,.22)!important;border-radius:16px!important}
-[data-testid="stExpander"]{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:18px!important;margin-bottom:14px}
-[data-testid="stExpander"] summary p{font-size:14px!important;font-weight:800!important}
-.stTabs [data-baseweb="tab-list"]{gap:6px;border:none!important;flex-wrap:wrap}
-.stTabs [data-baseweb="tab"]{height:42px;padding:0 18px;border-radius:12px;font-size:13px;font-weight:700;background:var(--card)!important;border:1px solid var(--line)}
-.stTabs [data-baseweb="tab"] p{color:var(--muted)!important}
-.stTabs [aria-selected="true"]{background:linear-gradient(135deg,rgba(139,92,246,.55),rgba(34,211,238,.35))!important;border-color:rgba(255,255,255,.25)!important}
-.stTabs [aria-selected="true"] p{color:#fff!important}
-.stTabs [data-baseweb="tab-highlight"],.stTabs [data-baseweb="tab-border"]{display:none!important}
-[data-testid="stMetric"]{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;backdrop-filter:blur(14px)}
-[data-testid="stMetricLabel"] p{color:var(--muted)!important;font-size:12px!important}
-[data-testid="stMetricValue"]{font-weight:800!important}
-[data-testid="stDataFrame"]{border:1px solid var(--line);border-radius:16px;overflow:hidden}
-[data-testid="stAlert"]{border-radius:14px;background:var(--card)!important;border:1px solid var(--line)}
-.stCaption,.stCaption *{color:var(--muted)!important}
-.footer{margin-top:40px;padding:30px 0 6px;border-top:1px solid var(--line);text-align:center}
-.footer-brand{font-size:16px;font-weight:900}
-.footer div{color:var(--muted)!important;font-size:12px;margin-top:6px}
-@media(max-width:900px){.main .block-container{padding:14px 14px 40px!important}.hero-title{font-size:30px}.live{display:none}.hero{padding:24px}}
+html, body, .stApp { font-family: Arial, Helvetica, sans-serif; }
+.stApp { color: var(--ink); background: var(--page) !important; color-scheme: light; }
+.stApp, .stApp p, .stApp span, .stApp li, .stApp label, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6 { color: var(--ink); }
+[data-testid="stIconMaterial"] { font-family: 'Material Symbols Rounded' !important; }
+[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], #MainMenu, footer { display: none !important; }
+.main .block-container { max-width: 1500px !important; margin: 0 auto !important; padding: 26px 42px 56px !important; }
+h1, h2, h3, h4 { letter-spacing: -0.025em; font-weight: 700; color: var(--ink) !important; }
+h3 { font-size: 1.12rem !important; margin-top: .35rem !important; }
+hr { border-color: var(--line) !important; }
+.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; gap:16px; }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand-logo { width:42px; height:42px; border-radius:11px; display:grid; place-items:center; font-size:20px; background:#E9D6C8; border:1px solid #DCC2B0; }
+.brand-name { font-size:20px; font-weight:800; letter-spacing:-.04em; color:var(--ink)!important; }
+.brand-sub { font-size:12px; color:var(--muted)!important; margin-top:2px; }
+.live { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; background:var(--surface); border:1px solid var(--line); font-size:12px; font-weight:700; color:#526A56!important; }
+.live i { width:8px; height:8px; border-radius:50%; background:var(--sage); display:inline-block; }
+.hero { padding:30px 34px; border-radius:14px; margin-bottom:18px; background:#EDE4D8; border:1px solid #DFD2C2; box-shadow:0 3px 12px rgba(61,48,35,.035); }
+.hero:before { content:none; }
+.hero>* { position:relative; z-index:1; }
+.kicker { font-size:11px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--terracotta-dark)!important; }
+.hero-title { font-family: Georgia, 'Times New Roman', serif; font-size:43px; line-height:1.08; font-weight:700; letter-spacing:-.045em; margin-top:10px; color:var(--ink)!important; }
+.hero-text { max-width:760px; margin-top:12px; font-size:14px; line-height:1.7; color:#625B52!important; }
+.pills { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+.pills span { padding:6px 10px; border-radius:6px; font-size:10px; font-weight:700; letter-spacing:.035em; background:#F8F3EC; border:1px solid #DCCFC0; color:#5D594F!important; }
+.st-key-toolbar { background:var(--surface)!important; border:1px solid var(--line)!important; border-radius:12px!important; padding:10px 14px!important; margin-bottom:16px; }
+.metric-card { min-height:116px; padding:18px 19px; border-radius:12px; background:var(--surface); border:1px solid var(--line); box-shadow:0 3px 12px rgba(61,48,35,.035); }
+.metric-card:after { content:none; }
+.metric-card:hover { border-color:#CDBBA8; }
+.metric-card.hot { background:#F2E4DE; border-color:#DFC3B8; box-shadow:none; }
+.metric-label { font-size:11px; font-weight:700; color:var(--muted)!important; text-transform:uppercase; letter-spacing:.065em; }
+.metric-value { font-size:32px; font-weight:800; letter-spacing:-.04em; margin-top:9px; color:var(--ink)!important; }
+.metric-delta { font-size:12px; color:var(--muted)!important; margin-top:5px; }
+.section-card { padding:19px; border-radius:12px; background:var(--surface); border:1px solid var(--line); box-shadow:0 3px 12px rgba(61,48,35,.025); margin-bottom:14px; }
+.section-card h3 { margin:0 0 6px; }
+.alert-card { padding:14px 17px; border-radius:10px; font-size:13px; line-height:1.6; background:#F4E7DE; border:1px solid #E5C9BA; color:#704635!important; }
+.alert-card b { color:#704635!important; }
+.small-muted, .pulse-label { font-size:12px; color:var(--muted)!important; }
+.pulse-label { text-transform:uppercase; letter-spacing:.07em; font-weight:700; }
+.pulse-value { font-size:32px; font-weight:800; letter-spacing:-.04em; margin-top:4px; }
+.pulse-track { height:7px; background:#EAE3D9; border-radius:5px; margin-top:14px; overflow:hidden; }
+.pulse-fill { height:100%; border-radius:5px; }
+.table-wrap { overflow:auto; border-radius:11px; border:1px solid var(--line); background:var(--surface); }
+.glass-table { width:100%; border-collapse:collapse; font-size:13px; }
+.glass-table th { position:sticky; top:0; text-align:left; padding:12px 14px; font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#71695E!important; background:#F1EBE2; border-bottom:1px solid var(--line); white-space:nowrap; }
+.glass-table td { padding:12px 14px; border-bottom:1px solid #EEE7DE; white-space:nowrap; color:var(--ink)!important; }
+.glass-table tr:last-child td { border-bottom:none; }
+.glass-table tbody tr:hover td { background:#F8F3EC; }
+.badge { display:inline-block; padding:4px 9px; border-radius:6px; font-size:11px; font-weight:700; }
+.b-high { background:#F6E4E1; color:#963C36!important; border:1px solid #E8C4BF; }
+.b-medium { background:#F7EBDD; color:#8D5B1F!important; border:1px solid #E9D0AD; }
+.b-low { background:#E5EEE6; color:#41664C!important; border:1px solid #C8DCCB; }
+.b-unknown { background:#F0EBE4; color:#6F685F!important; border:1px solid var(--line); }
+.pbar { position:relative; min-width:120px; height:22px; border-radius:5px; background:#EEE7DE; overflow:hidden; }
+.pbar i { position:absolute; left:0; top:0; bottom:0; background:#D9B8A7; opacity:.8; }
+.pbar span { position:relative; z-index:1; display:block; padding:3px 9px; font-size:12px; font-weight:700; color:#302D28!important; }
+.stButton>button, .stDownloadButton>button { min-height:40px!important; border-radius:8px!important; font-weight:700!important; font-size:13px!important; background:#F8F3EC!important; border:1px solid #DCCFC0!important; color:#302D28!important; box-shadow:none!important; transition:background .15s,border-color .15s!important; }
+.stButton>button:hover, .stDownloadButton>button:hover { border-color:#B98B72!important; background:#F0E5D9!important; }
+.stButton>button[kind="primary"], .stDownloadButton>button { background:#92543D!important; border-color:#92543D!important; color:#FFF9F3!important; }
+.stButton>button[kind="primary"]:hover, .stDownloadButton>button:hover { background:#7F4835!important; }
+.stButton>button *, .stDownloadButton>button * { color:inherit!important; }
+.stButton>button:disabled { opacity:.48!important; }
+[data-testid="stWidgetLabel"] p { font-size:12px!important; font-weight:700!important; color:#625D55!important; }
+.stTextInput input, .stTextArea textarea, [data-baseweb="select"]>div, [data-baseweb="input"] { background:#FFFCF7!important; color:#302D28!important; border-color:#D9CFC1!important; border-radius:8px!important; }
+.stTextInput input::placeholder, .stTextArea textarea::placeholder { color:#948A7D!important; }
+[data-baseweb="popover"], [data-baseweb="menu"] { background:#FFFCF7!important; border:1px solid var(--line)!important; border-radius:8px!important; }
+[data-baseweb="menu"] * { color:#302D28!important; background:transparent!important; }
+[data-baseweb="menu"] li:hover { background:#F0E5D9!important; }
+[data-baseweb="tag"] { background:#E9D6C8!important; color:#593E31!important; }
+.stFileUploader section { background:#FAF6F0!important; border:1px dashed #CDBBA8!important; border-radius:10px!important; }
+.stFileUploader section * { color:#625D55!important; }
+[data-testid="stExpander"] { background:var(--surface)!important; border:1px solid var(--line)!important; border-radius:11px!important; margin-bottom:14px; }
+[data-testid="stExpander"] summary p { font-size:14px!important; font-weight:700!important; color:var(--ink)!important; }
+.stTabs [data-baseweb="tab-list"] { gap:5px; border-bottom:1px solid var(--line)!important; flex-wrap:wrap; }
+.stTabs [data-baseweb="tab"] { height:42px; padding:0 15px; border-radius:8px 8px 0 0; font-size:13px; font-weight:700; background:transparent!important; }
+.stTabs [data-baseweb="tab"] p { color:#71695E!important; }
+.stTabs [aria-selected="true"] { background:#E9D6C8!important; border-bottom:2px solid #92543D!important; }
+.stTabs [aria-selected="true"] p { color:#593E31!important; }
+.stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] { background:#92543D!important; }
+[data-testid="stMetric"] { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:13px 15px; }
+[data-testid="stMetricLabel"] p { color:var(--muted)!important; font-size:12px!important; }
+[data-testid="stMetricValue"] { color:var(--ink)!important; font-weight:800!important; }
+[data-testid="stDataFrame"] { border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+[data-testid="stAlert"] { border-radius:10px; background:#FAF6F0!important; border:1px solid var(--line); }
+.stCaption, .stCaption * { color:var(--muted)!important; }
+.footer { margin-top:38px; padding:25px 0 6px; border-top:1px solid var(--line); text-align:center; }
+.footer-brand { font-size:16px; font-weight:800; color:var(--ink)!important; }
+.footer div { color:var(--muted)!important; font-size:12px; margin-top:6px; }
+@media(max-width:900px) { .main .block-container { padding:14px 14px 36px!important; } .hero-title { font-size:32px; } .live { display:none; } .hero { padding:22px; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
 </style>
 ''', unsafe_allow_html=True)
 
@@ -557,10 +525,10 @@ elif scope_mode == "Above threshold":
 
 mc = st.columns(4)
 cards = [
-    ("hot", "High-risk providers", f"{high_risk:,}", f"{high_risk_rate:.1%} of current run", "#fb3b64"),
-    ("", "Providers analyzed", f"{provider_count:,}", f"Run #{prediction_run_id}", "#22d3ee"),
-    ("", "Average probability", f"{average_probability:.1%}", f"Model threshold {current_threshold:.2f}", "#8b5cf6"),
-    ("", "Peak probability", f"{max_probability:.1%}", "Highest provider signal", "#f5a524"),
+    ("hot", "High-risk providers", f"{high_risk:,}", f"{high_risk_rate:.1%} of current run", "#B94B43"),
+    ("", "Providers analyzed", f"{provider_count:,}", f"Run #{prediction_run_id}", "#718A75"),
+    ("", "Average probability", f"{average_probability:.1%}", f"Model threshold {current_threshold:.2f}", "#B86F52"),
+    ("", "Peak probability", f"{max_probability:.1%}", "Highest provider signal", "#B77A32"),
 ]
 for col, (cls, label, value, delta, accent) in zip(mc, cards):
     col.markdown(
@@ -594,7 +562,7 @@ with tab_command:
         fig = go.Figure(go.Pie(
             labels=["High", "Medium", "Low"], values=[high_risk, medium_risk, low_risk], hole=0.68,
             textinfo="label+percent", marker=dict(colors=[RISK_COLORS[k] for k in ("High", "Medium", "Low")],
-                                                   line=dict(color="#060810", width=3)),
+                                                   line=dict(color="#FFFCF7", width=3)),
         ))
         style_fig(fig, 400).update_layout(legend=dict(orientation="h", y=-0.05), margin=dict(l=10, r=10, t=10, b=10))
         st.plotly_chart(fig, use_container_width=True)
@@ -623,13 +591,13 @@ with tab_command:
     pc = st.columns([1.3, 1, 1, 1])
     with pc[0]:
         gauge = go.Figure(go.Indicator(
-            mode="gauge+number", value=pprob * 100, number={"suffix": "%", "font": {"size": 34, "color": "#eef1fb"}},
-            gauge={"axis": {"range": [0, 100], "tickcolor": "#5b6382"},
-                   "bar": {"color": RISK_COLORS.get(prisk, "#8b5cf6"), "thickness": .3},
-                   "bgcolor": "rgba(255,255,255,.04)", "borderwidth": 0,
-                   "steps": [{"range": [0, 30], "color": "rgba(18,214,160,.14)"},
-                             {"range": [30, 70], "color": "rgba(245,165,36,.14)"},
-                             {"range": [70, 100], "color": "rgba(251,59,100,.16)"}]},
+            mode="gauge+number", value=pprob * 100, number={"suffix": "%", "font": {"size": 34, "color": "#302D28"}},
+            gauge={"axis": {"range": [0, 100], "tickcolor": "#777066", "tickfont": {"color": "#625D55"}},
+                   "bar": {"color": RISK_COLORS.get(prisk, "#B86F52"), "thickness": .3},
+                   "bgcolor": "#F0EAE0", "borderwidth": 0,
+                   "steps": [{"range": [0, 30], "color": "#E5EEE6"},
+                             {"range": [30, 70], "color": "#F7EBDD"},
+                             {"range": [70, 100], "color": "#F6E4E1"}]},
         ))
         style_fig(gauge, 200).update_layout(margin=dict(l=20, r=20, t=20, b=5))
         st.plotly_chart(gauge, use_container_width=True, config={"displayModeBar": False})
@@ -799,8 +767,8 @@ with tab_explain:
                     fig = px.bar(top_exp.sort_values("SHAP Value"), x="SHAP Value", y="Feature",
                                  orientation="h", title="Feature contributions to model output",
                                  hover_data=["Feature Value", "Impact"],
-                                 color="SHAP Value", color_continuous_scale=["#12d6a0", "#8b5cf6", "#fb3b64"])
-                    fig.add_vline(x=0, line_width=1, line_color="rgba(255,255,255,.4)")
+                                 color="SHAP Value", color_continuous_scale=["#718A75", "#D9C7B7", "#B86F52"])
+                    fig.add_vline(x=0, line_width=1, line_color="#CFC4B6")
                     style_fig(fig, 520).update_layout(coloraxis_showscale=False)
                     st.plotly_chart(fig, use_container_width=True)
             except Exception as exc:
@@ -813,9 +781,9 @@ with tab_analytics:
 
     with a1:
         fig = px.histogram(aggregated, x="Fraud Probability", nbins=30, title="Provider probability distribution",
-                           color_discrete_sequence=["#8b5cf6"])
-        fig.add_vline(x=current_threshold, line_dash="dash", line_color="#22d3ee",
-                      annotation_text="Decision threshold", annotation_font_color="#22d3ee")
+                           color_discrete_sequence=["#B86F52"])
+        fig.add_vline(x=current_threshold, line_dash="dash", line_color="#718A75",
+                      annotation_text="Decision threshold", annotation_font_color="#526A56")
         st.plotly_chart(style_fig(fig, 430), use_container_width=True)
 
     with a2:
